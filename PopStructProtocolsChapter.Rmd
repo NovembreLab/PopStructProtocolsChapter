@@ -148,7 +148,8 @@ The cross-validation error suggests a single source population can model the dat
 ```{r, engine = 'bash', eval = FALSE}
 pong -m out/H938_Euro.LDprune.Qfilemap -i out/H938_Euro.ind2pop
 ```  
-The output here are somewhat complex.  
+
+[TODO insert png of output and describe]
 
 ### Some advanced options
 
@@ -189,9 +190,15 @@ smartpca -p ./out/H938_Euro.LDprune.par
 ```   
 
 #### Plotting PCA results with PCAviz
-The PCAviz package can be found at (https://github.com/NovembreLab/PCAviz). It provides a simple interface for quickly creating visually compelling plots from Principal Components Analysis (PCA) and accompanying data. The following command in `R` generates plots showing each individual sample's position in the PCA space and the median position of each labelled group in PCA space:
+The PCAviz package can be found at (https://github.com/NovembreLab/PCAviz). It provides a simple interface for quickly creating visually compelling plots from Principal Components Analysis (PCA) and accompanying data. It encodes several of the best practices we use for plotting PCA (such as using abberviations for point characters and plotting median positions of each labelled group).  The installation is simple:
+```{r, eval=FALSE,echo=FALSE}
+install.packages("devtools")
+devtools::install_github("NovembreLab/PCAviz",build_vignettes = TRUE)
+```
 
-```{r, eval = TRUE,echo=FALSE, results='hide',warning=FALSE,messge=FALSE, fig.height=10,fig.width=10}
+The following command in `R` generates plots showing each individual sample's position in the PCA space and the median position of each labelled group in PCA space:
+
+```{r, eval = TRUE,echo=FALSE, results='hide',warning=FALSE,message=FALSE, fig.height=10,fig.width=10}
 library(PCAviz)
 library(cowplot)
 prefix="out/H938_Euro.LDprune"
@@ -272,9 +279,9 @@ screeplot(hgdp,type='pve') + ylim(0.005,.018) +
 
 Our protocol above is relatively straightfoward and presents the most basic implementation of these analyses. Each analysis sofware (`ADMIXTURE` and `smartpca`) and each visualization package ('pong' and 'PCAviz') contains numerous other options that may be suitable for specific analyses and we encourage the readers to spend time in the manuals of each.  Nonetheless, what we have presented is a useful start and a standard pipeline that we use in our research.
 
-Several of the prominent reviews on the performance of these methods will highlight the confusing impacts of factors such as uneven sample sizes across sub-populations, the inclusion of close relatives in a sample (cryptic relatedness), spatial structure, or small sample sizes.  We do not want to belabor these points, but we do want to highlight the impact of localized genomic regions that have extensive marker-to-marker association (linkage disequilibrium) on PCA and admixture model results.  The issue is mainly discussed amongst in person among experienced analysts without having a concomitantly large discussion in the published literture. This issue is particularly prominent when working with human genetic data with low levels of differentiation, as in those settings, the methods seem more prone to fitting structure in particular genomic regions versus a weak single of structure across the whole genome.  A nice empirical example of the problem is in XXXX, where PCX is seen to be indicative of an inversion type at the 8pXXX region.  [Cite Peter Ralph bioRxiv?]
+Several of the prominent reviews on the performance of these methods will highlight the confusing impacts of factors such as uneven sample sizes across sub-populations, the inclusion of close relatives in a sample (cryptic relatedness), spatial structure, or small sample sizes.  We do not want to belabor these points, but we do want to highlight the impact of localized genomic regions that have extensive marker-to-marker association (linkage disequilibrium) on PCA and admixture model results.  The issue is mainly discussed amongst in person among experienced analysts without having a concomitantly large discussion in the published literture. This issue is particularly prominent when working with human genetic data with low levels of differentiation, as in those settings, the methods seem more prone to fitting structure in particular genomic regions versus a weak single of structure across the whole genome.  A nice empirical example of the problem is in XXXX, where PCX is seen to be indicative of an inversion type at the 8pXXX region.  [also Cite Peter Ralph bioRxiv?]
 
-Two broad perspecives we find helpful are to always keep in mind 1) How the admixture model and PCA framework are related to each other indirectly as different forms of sparse factor analyss [@Engelhardt2010]; 2) How the PCA framework in particular can be considered as a form of efficient data compression.  Both of these perspectives can be helpful in interpreting the outputs of the methods and for appreciating how these approaches best serve as helpful visual exploratory tools for analyzing structure in genetic data.  The methods produce characterizations of structure using simplified statistical tools for complex species, and though the results rarely resolve specific hypotheses directly, they are extremely useful for framing specific models of populatoin structure that can be further investigated using more detailed and explicit approachs; for example, those based on coalescent or diffusion theory (Chapters XX and XX). 
+Two broad perspecives we find helpful are to always keep in mind 1) How the admixture model and PCA framework are related to each other indirectly as different forms of sparse factor analyss [@Engelhardt2010]; 2) How the PCA framework in particular can be considered as a form of efficient data compression.  Both of these perspectives can be helpful in interpreting the outputs of the methods and for appreciating how these approaches best serve as helpful visual exploratory tools for analyzing structure in genetic data.  The methods produce characterizations of structure using simplified statistical tools for complex species, and though the results rarely resolve specific hypotheses directly, they are extremely useful for framing specific models of population structure that can be further investigated using more detailed and explicit approachs; for example, those based on coalescent or diffusion theory (Chapters XX and XX). 
 
 ## Extra-text (Candidatest to be removed)
 
