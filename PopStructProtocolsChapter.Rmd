@@ -275,6 +275,7 @@ screeplot(hgdp,type='pve') + ylim(0.005,.018) +
       theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
       theme(axis.line = element_line(size = 1, linetype = "solid"))
 ```
+
 ##  Discussion
 
 Our protocol above is relatively straightfoward and presents the most basic implementation of these analyses. Each analysis sofware (`ADMIXTURE` and `smartpca`) and each visualization package ('pong' and 'PCAviz') contains numerous other options that may be suitable for specific analyses and we encourage the readers to spend time in the manuals of each.  Nonetheless, what we have presented is a useful start and a standard pipeline that we use in our research.
@@ -283,7 +284,7 @@ Several of the prominent reviews on the performance of these methods will highli
 
 Two broad perspecives we find helpful are to always keep in mind 1) How the admixture model and PCA framework are related to each other indirectly as different forms of sparse factor analyss [@Engelhardt2010]; 2) How the PCA framework in particular can be considered as a form of efficient data compression.  Both of these perspectives can be helpful in interpreting the outputs of the methods and for appreciating how these approaches best serve as helpful visual exploratory tools for analyzing structure in genetic data.  The methods produce characterizations of structure using simplified statistical tools for complex species, and though the results rarely resolve specific hypotheses directly, they are extremely useful for framing specific models of population structure that can be further investigated using more detailed and explicit approachs; for example, those based on coalescent or diffusion theory (Chapters XX and XX). 
 
-## Extra-text (Candidatest to be removed)
+## Extra-text (Can be included in discussion or removed for brevity)
 
 First run ADMIXTURE on all 938 individuals. In figure 1, with K=5, 6 continental groups are separated. The 6-th component further separates European from Central/South Asian, and captures the uniqueness of Sardinian. The 7-th component separates middle-east populations from European. In Rosenberg et al, East Asia with little among-population variance component, requires almost all loci to achieve comparable results to that using full data (Also see 3.2 Troubleshooting). One may observe in Yakut, whose language is Altaic, is the only population in East Asia that share ancestry with America and Europe [@Rosenberg2381;@Li1100].
 
