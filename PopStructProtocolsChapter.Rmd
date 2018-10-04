@@ -46,17 +46,17 @@ For running some simple examples below, we will first create a subset of the HGD
 ```{r, engine = 'bash', eval = FALSE}
 awk '$3=="Adygei"||$3=="French_Basque"||$3=="French"|| \
 $3=="North_Italian"||$3=="Orcadian"||$3=="Russian"|| \ 
-$3=="Sardinian"||$3=="Tuscan" {print $0}' ../raw_input/H938.clst.txt > out/Euro.clst.txt
+$3=="Sardinian"||$3=="Tuscan" {print $0}' raw_input/H938.clst.txt > out/Euro.clst.txt
 
-plink --bfile ../raw_input/H938 --keep Euro.clst.txt --make-bed --out out/H938_Euro
+plink --bfile raw_input/H938 --keep Euro.clst.txt --make-bed --out out/H938_Euro
 ```
 
 ### Filter out SNPs to remove linkage disequilibrium (LD).  
 SNPs in high LD with each other contain redundant information.  More worrisome is the potential for some regions of the genome to have a disproportionate influence on the results and thus distort the representation of genome-wide structure. A standard approach to address this issue is to filter out SNPs based on pairwise LD to a reduced set of more independent markers.  Here we use `plink`'s commands to produce a new LD-pruned dataset with output prefix 'H938.LDpruned'.  The approach considers a chromosomal window of 50 SNPs at a time, and for any pair whose genotypes have an association $r^2$ value greater than 0.1, it removes a SNP from the pair.  Then the window is shifted by 10 SNPs and the procedure is repeated:  
 
 ```{r, engine = 'bash', eval = FALSE}
-plink --bfile ../raw_input/H938 --indep-pairwise 50 10 0.1
-plink --bfile ../raw_input/H938 --extract plink.prune.in --make-bed --out out/H938.LDprune
+plink --bfile raw_input/H938 --indep-pairwise 50 10 0.1
+plink --bfile raw_input/H938 --extract plink.prune.in --make-bed --out out/H938.LDprune
 
 plink --bfile out/H938_Euro --indep-pairwise 50 10 0.1
 plink --bfile out/H938_Euro --extract plink.prune.in --make-bed --out out/H938_Euro.LDprune
