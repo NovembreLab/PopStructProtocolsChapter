@@ -59,7 +59,7 @@ plink --bfile out/H938_Euro --indep-pairwise 50 10 0.1
 plink --bfile out/H938_Euro --extract plink.prune.in --make-bed --out out/H938_Euro.LDprune
 ```
 
-[Advanced note: For particularly sensitive results, we recommend additional rounds of SNP filtering based on observed principal component loadings and/or population differentiation statistics. For example, a robust approach is to filter out large windows aroudn any SNP with a high PCA loading, see @Novembre08b].
+[Advanced note: For particularly sensitive results, we recommend additional rounds of SNP filtering based on observed principal component loadings and/or population differentiation statistics. For example, a robust approach is to filter out large windows around any SNP with a high PCA loading, see @Novembre08b].
     
 ### Running `ADMIXTURE`
 The `ADMIXTURE` software (v 1.3.0 here) comes as a pre-compiled binary executable file for either Linux or Mac operating systems. To install, simply download the package and move the executable into your standard execution path (e.g. '/usr/local/bin' on many linux systems).  Once installed, it is straightforward to run `ADMIXTURE` with a fixed number of source populations, commonly denoted by $K$. For example, to get started let's run ADMIXTURE with $K$=8 as there are 8 distinctly labelled populations in the dataset:
@@ -82,7 +82,7 @@ Each thin vertical line in the barplot represents one individual and each color 
 
 To improve the visualization, one can use a package dedicated to plotting ancestry proportions [@Rosenberg04; @Kopelman15; @Behr16]. Here we use a post-processing tool `pong` [@Behr16], which visualizes individual ancestry with similarity between individuals within clusters. You will most likely want to install 'pong' on a local machine as it initializes a local web server to display the results.  
 
-To run `pong` requires setting up a few files: 1) an `ind2pop` file that maps individuals to populations; 2) a `Qfilemap` file that points `pong` towards which '.Q' files to display; These are easy to build up from the command-line based using the `Euro.clst.txt` file we built above, and an `awk` command to output tab-seperated text to a file with the `Qfilemap` suffix added to whatever file prefix we're using to organize our runs:
+To run `pong` requires setting up a few files: 1) an `ind2pop` file that maps individuals to populations; 2) a `Qfilemap` file that points `pong` towards which '.Q' files to display; These are easy to build up from the command-line using the `Euro.clst.txt` file we built above, and an `awk` command to output tab-seperated text to a file with the `Qfilemap` suffix added to whatever file prefix we're using to organize our runs:
 
 ```{r, engine='bash',eval=FALSE}
 cut -d' ' -f3 out/Euro.clst.txt > out/H938_Euro.ind2pop
@@ -164,7 +164,7 @@ Overall, it's worth noting that the visual inspection of the results suggests se
 
 ### Some advanced options
 
-Running `ADMIXTURE` with the `-B` option provides estimates of standard errors on the ancestry proportion inferences. The `-l` flag runs `ADMIXTURE` with a penalized likelihood that favors more sparse solutions (i.e., ancestry proportions that are closer to zero).  This is useful in settings where small, possibly erroneous ancestry proportions may be overinterpreted. By using the `-P` option, the population allele frequencies inferred from one dataset can be provided as input for inference of admixture proportions in a second dataset. This is useful individuals of unknown ancestry are being analyzed against the background of a reference sample set.  Please see the `ADMIXTURE` manual for a complete listing of options and more detail, and we encourage testing these options in test datasaets such as the one provided here. 
+Running `ADMIXTURE` with the `-B` option provides estimates of standard errors on the ancestry proportion inferences. The `-l` flag runs `ADMIXTURE` with a penalized likelihood that favors more sparse solutions (i.e., ancestry proportions that are closer to zero).  This is useful in settings where small, possibly erroneous ancestry proportions may be overinterpreted. By using the `-P` option, the population allele frequencies inferred from one dataset can be provided as input for inference of admixture proportions in a second dataset. This is useful when individuals of unknown ancestry are being analyzed against the background of a reference sample set.  Please see the `ADMIXTURE` manual for a complete listing of options and more detail, and we encourage testing these options in test datasets such as the one provided here. 
     
 ### PCA with SMARTPCA
 Comparing ADMIXTURE and PCA results often helps give insight and confirmation regarding population structure in a  sample. To run PCA, a standard package that is well-suited for SNP data is the `smartpca` package maintained by Nick Patterson and Alkes Price (at http://data.broadinstitute.org/alkesgroup/EIGENSOFT/). To run it, we first set-up a basic `smartpca` parameter file from the command-line of a `bash` shell:
@@ -203,14 +203,14 @@ You will find the output files in the `out` sub-directory as specified in the pa
 
 #### Plotting PCA results with PCAviz
 The PCAviz package can be found at https://github.com/NovembreLab/PCAviz. It provides a simple interface for quickly creating plots from PCA results. It encodes several of our favored best practices for plotting PCA (such as using abberviations for point characters and plotting median positions of each labelled group).  To install the package use:
-```{r, eval=FALSE,echo=FALSE}
+```{r, eval=FALSE,echo=TRUE}
 install.packages("devtools")
 devtools::install_github("NovembreLab/PCAviz",build_vignettes = TRUE)
 ```
 
 The following command in `R` generates plots showing each individual sample's position in the PCA space and the median position of each labelled group in PCA space:
 
-```{r, eval = TRUE, echo=FALSE, results='hide',warning=FALSE,message=FALSE, fig.height=10,fig.width=10}
+```{r, eval = TRUE, echo=TRUE, results='hide',warning=FALSE,message=FALSE, fig.height=10,fig.width=10}
 library(PCAviz)
 library(cowplot)
 prefix="out/H938_Euro.LDprune"
@@ -290,21 +290,21 @@ plot_grid(prow, plot_legend, ncol = 1, rel_heights = c(1, .2))
 
 ```
 
-The proportion of total variance explained by each PC is a useful metric for understanding structure ina a sample and for evaluating how many PCs one might want to include in downstream analyses. This can be computed as  $\lambda_i / \sum_{k} \lambda_k$, with $\lambda_i$ being eigenvalues in decreasing order, and is plotted below:
-```{r, eval = TRUE, echo=FALSE,warnings=FALSE,fig.width=3.25,fig.height=3}
+The proportion of total variance explained by each PC is a useful metric for understanding structure in a sample and for evaluating how many PCs one might want to include in downstream analyses. This can be computed as  $\lambda_i / \sum_{k} \lambda_k$, with $\lambda_i$ being eigenvalues in decreasing order, and is plotted below:
+```{r, eval = TRUE, echo=TRUE,warnings=FALSE,fig.width=3.25,fig.height=3}
 screeplot(hgdp,type='pve')  + ylim(0,0.018)+
       theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
       theme(axis.line = element_line(size = 1, linetype = "solid"))
 ```
 
-The results show that the top PCs only explain a small fraction of the variance (<1.5%) and that after about $K=6$ the variance explained per PC becomes relatively constant; rouhgly in line with the visual inspection of the `admixture` results that revealed $K=6$ may be reasonable for this dataset. 
+The results show that the top PCs only explain a small fraction of the variance (<1.5%) and that after about $K=6$ the variance explained per PC becomes relatively constant; roughly in line with the visual inspection of the `admixture` results that revealed $K=6$ may be reasonable for this dataset. 
 
 
 ##  Discussion
 
 Our protocol above is relatively straightfoward and presents the most basic implementation of these analyses. Each analysis sofware (`ADMIXTURE` and `smartpca`) and each visualization package (`pong` and `PCAviz`) contain numerous other options that may be suitable for specific analyses and we encourage the readers to spend time in the manuals of each.  Nonetheless, what we have presented is a useful start and a standard pipeline that we use in our research.
 
-Two broad perspecives we find helpful useful to keep in mind are: 1) How the admixture model and PCA framework are related to each other indirectly as different forms of sparse factor analyss [@Engelhardt10]; 2) How the PCA framework in particular can be considered as a form of efficient data compression.  Both of these perspectives can be helpful in interpreting the outputs of the methods and for appreciating how these approaches best serve as helpful visual exploratory tools for analyzing structure in genetic data.  These methods are ultimately relatively simple statistical tools being used to summarize complex realites.  They are part of the toolkit for analysis, and often are extremely useful for framing specific models of population structure that can be further investigated using more detailed and explicit approachs (such as those based on coalescent or diffusion theory, Chapters XX and XX). 
+Two broad perspecives we find helpful useful to keep in mind are: 1) How the admixture model and PCA framework are related to each other indirectly as different forms of sparse factor analyss [@Engelhardt10]; 2) How the PCA framework in particular can be considered as a form of efficient data compression.  Both of these perspectives can be helpful in interpreting the outputs of the methods and for appreciating how these approaches best serve as helpful visual exploratory tools for analyzing structure in genetic data.  These methods are ultimately relatively simple statistical tools being used to summarize complex realities.  They are part of the toolkit for analysis, and often are extremely useful for framing specific models of population structure that can be further investigated using more detailed and explicit approaches (such as those based on coalescent or diffusion theory, Chapters XX and XX). 
 
 
 ## References
