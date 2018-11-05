@@ -106,7 +106,7 @@ Here's  an example of what you should see:
 
 From this visualization we can see the admixture model fits most individuals of the Adygei, Orcadian, and Russian samples as being derived each from a single source population (represented by orange, green, and blue respectively); the Sardinian and the French Basque samples are modeled as comprising individuals from two source populations each (yellow/red for Sardinia, brown/pink for French Basque); and the French, Tuscan, and North Italian samples are generally estimated to have a majority component of ancestry from a single source population ('purple') though with notable admixture with other sources.  A first conclusions is that the population labels do not capture the complexity of the population structure.  There is apparent cryptic structure within some samples (e.g., Sardinia) and minimal differentiation between other samples (North Italian and Tuscan samples for instance).  
 
-We can run ADMIXTURE multiple times with -s flag specifying random seeds. This is useful when determining if ADMIXTURE finds global optima. Pong summarizes modality and provides `check to highlight multimodality` checkbox whitening populations with ancestry matrices agreeing the mode. One can also click on and visualize only one cluster.
+We can run ADMIXTURE multiple times with -s flag specifying random seeds. This is useful determining if ADMIXTURE finds global optima. Pong summarizes modality and provides `check to highlight multimodality` checkbox whitening populations with ancestry matrices agreeing the mode. One can also click on and visualize only one cluster.
 
 ```{r, engine='bash',eval=FALSE}
 # run admixture multiple times
