@@ -3,9 +3,9 @@ title: "Exploring population structure with admixture models and principal compo
 author: "Chi-Chun Liu, Suyash Shringapure, Ken Lange, John Novembre"
 date:
 output:
-  html_document:
-    fig_caption: yes
   pdf_document:
+    fig_caption: yes
+  html_document:
     fig_caption: yes
 csl: springer-basic-author-date.csl.txt
 bibliography: references.bib
@@ -118,7 +118,7 @@ do
 admixture -s ${RANDOM} out/H938_Euro.LDprune.bed $K
 mv out/${prefix}.${K}.Q out/${prefix}.K${K}r${r}.Q
 done
-# create pong parameter file
+# create a pong parameter file
 for r in {1..10}
 do
 awk -v K=$K -v r=$r -v file=${prefix}.K${K}r${r} 'BEGIN{ \
