@@ -163,7 +163,7 @@ tbl = read.table("out/H938_Euro.LDprune.CV.txt")
 plot(tbl$V1,tbl$V2,xlab="K",ylab="Cross-validation error",pch=16,type='l')
 ```
 
-The cross-validation error suggests a single source population can model the data adequately and larger values of $K$ lead to over-fitting. `pong` can also help us visualize ancestry components inferred in different $K$, and number for runs agreeing major mode for a given $K$ is conviently summarized. 
+The cross-validation error suggests a single source population can model the data adequately and larger values of $K$ lead to over-fitting. `pong` can also help us visualize ancestry components inferred in different $K$, and number of runs agreeing major mode for a given $K$ is conviently summarized. 
 
 ```{r, engine = 'bash', eval = FALSE}
 # Run for different values of K, each with 10 runs
@@ -173,11 +173,8 @@ do
   admixture -s ${RANDOM} out/${prefix}.bed $K
   mv out/${prefix}.${K}.Q out/${prefix}.K${K}r${r}.Q
 done; done 
-```
 
-Again, we create an input file for `pong`.
-```{r, engine = 'bash', eval = FALSE}
-prefix=H938_Euro.LDprune
+# create Qmap file for pong
 createQmap(){
 local r=$1
 local K=$2
