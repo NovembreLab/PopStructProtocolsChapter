@@ -107,7 +107,7 @@ Here's  an example of what you should see:
 
 From this visualization we can see the admixture model fits most individuals of the Adygei, Orcadian, and Russian samples as being derived each from a single source population (represented by orange, green, and blue respectively); the Sardinian and the French Basque samples are modeled as comprising individuals from two source populations each (yellow/red for Sardinia, brown/pink for French Basque); and the French, Tuscan, and North Italian samples are generally estimated to have a majority component of ancestry from a single source population ('purple') though with notable admixture with other sources.  A first conclusions is that the population labels do not capture the complexity of the population structure.  There is apparent cryptic structure within some samples (e.g., Sardinia) and minimal differentiation between other samples (North Italian and Tuscan samples for instance).  
 
-We can run ADMIXTURE multiple times with -s flag specifying random seeds. This is useful determining if ADMIXTURE finds global optima. Pong summarizes modality and provides `check to highlight multimodality` checkbox whitening populations with ancestry matrices agreeing the major mode. One can also click on and visualize only one cluster.
+We can run ADMIXTURE multiple times with -s flag specifying random seeds. This is useful determining if ADMIXTURE finds global optima. Pong summarizes modality and provides `check to highlight multimodality` checkbox whitening populations with ancestry matrices agreeing with the major mode. One can also click on and visualize only one cluster.
 
 ```{r, engine='bash',eval=FALSE}
 K=6
@@ -163,7 +163,7 @@ tbl = read.table("out/H938_Euro.LDprune.CV.txt")
 plot(tbl$V1,tbl$V2,xlab="K",ylab="Cross-validation error",pch=16,type='l')
 ```
 
-The cross-validation error suggests a single source population can model the data adequately and larger values of $K$ lead to over-fitting. `pong` can also help us visualize ancestry components inferred in different $K$, and number of runs agreeing major mode for a given $K$ is conviently summarized. 
+The cross-validation error suggests a single source population can model the data adequately and larger values of $K$ lead to over-fitting. `pong` can also help us visualize ancestry components inferred in different $K$, and number of runs agreeing with the major mode for a given $K$ is conviently summarized. 
 
 ```{r, engine = 'bash', eval = FALSE}
 # Run for different values of K, each with 10 runs
@@ -190,7 +190,8 @@ pong -m out/H938_Euro.LDprune.multiplerun.Qfilemap --greedy  -s .95 -i out/H938_
 
 ![Example PONG output](./plot/mainviz_2018-10-12_10h7m3s_pong.png)
 
-Here we see how as $K$ increases through to $K=6$, the Sardinian, Basque, Adygei, and Russian samples are modeled as descended from unique sources, at $K=7$ and $K=8$ structure within the Sardinian and Basque samples is revealed, though the Basque sub-structure is not stable at higher values of $K$.  The values of $K=9$ and above make increasingly finer scale divisions that are difficult to interpret.  
+Here we see how as $K$ increases through to $K=6$, the Sardinian, Basque, Adygei, and Russian samples are modeled as descended from unique sources, at $K=7$ and $K=8$ structure within the Sardinian and Basque samples is revealed, though the Basque sub-structure is not stable at higher values of $K$.  The values of $K=9$ and above make increasingly finer scale divisions that are difficult to interpret, and major modes only consist of one to three runs.  
+
 Overall, it's worth noting that the visual inspection of the results suggests several "real" clusters in the data, though in this case the cross-validation supports a value of $K=1$.  This highlights a long-standing known issue with admixutre modeling: the selection of $K$ is a difficult problem to automate in a way that is robust.  
 
 ### Some advanced options
