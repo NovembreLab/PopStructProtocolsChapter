@@ -182,7 +182,7 @@ awk -v K=$K -v r=$r -v file=${prefix}.K${K}r${r} 'BEGIN{ \
 printf("K%dr%d\t%d\t%s.Q\n",K,r,K,file)
 }' >> out/${prefix}.multiplerun.Qfilemap
 }
-
+export -f createQmap
 for K in {2..12}; do for r in {1..10}; do createQmap $r $K; done; done
 
 pong -m out/H938_Euro.LDprune.multiplerun.Qfilemap --greedy  -s .95 -i out/H938_Euro.ind2pop
