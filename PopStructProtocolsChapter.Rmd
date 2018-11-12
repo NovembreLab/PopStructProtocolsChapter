@@ -185,6 +185,7 @@ printf("K%dr%d\t%d\t%s.Q\n",K,r,K,file)
 export -f createQmap
 for K in {2..12}; do for r in {1..10}; do createQmap $r $K; done; done
 
+#run pong
 pong -m out/H938_Euro.LDprune.multiplerun.Qfilemap --greedy  -s .95 -i out/H938_Euro.ind2pop
 ```  
 
