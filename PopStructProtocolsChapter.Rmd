@@ -3,9 +3,9 @@ title: "Exploring population structure with admixture models and principal compo
 author: "Chi-Chun Liu, Suyash Shringapure, Ken Lange, John Novembre"
 date:
 output:
-  pdf_document:
-    fig_caption: yes
   html_document:
+    fig_caption: yes
+  pdf_document:
     fig_caption: yes
 csl: springer-basic-author-date.csl.txt
 bibliography: references.bib
@@ -78,6 +78,7 @@ par(mar=c(1,4,2,2))
 barplot(t(as.matrix(tbl)), col=brewer.pal(8,"Set1"),
         ylab="Admixture Proportions",border=NA,space=0)
 ```
+
 Each thin vertical line in the barplot represents one individual and each color represents one inferred ancestral population. The length of each color in a vertical bar represents the proportion of that individual's ancestry that is derived from the inferred ancestral population corresponding to that color. The above image suggests there are some genetic clusters in the data, but it's not a well organized data display. 
 
 To improve the visualization, one can use a package dedicated to plotting ancestry proportions [@Rosenberg04; @Kopelman15; @Behr16]. Here we use a post-processing tool `pong` [@Behr16], which visualizes individual ancestry with similarity between individuals within clusters. You will most likely want to install 'pong' on a local machine as it initializes a local web server to display the results.  
@@ -106,13 +107,12 @@ Here's  an example of what you should see:
 
 From this visualization we can see the admixture model fits most individuals of the Adygei, Orcadian, and Russian samples as being derived each from a single source population (represented by orange, green, and blue respectively); the Sardinian and the French Basque samples are modeled as comprising individuals from two source populations each (yellow/red for Sardinia, brown/pink for French Basque); and the French, Tuscan, and North Italian samples are generally estimated to have a majority component of ancestry from a single source population ('purple') though with notable admixture with other sources.  A first conclusions is that the population labels do not capture the complexity of the population structure.  There is apparent cryptic structure within some samples (e.g., Sardinia) and minimal differentiation between other samples (North Italian and Tuscan samples for instance).  
 
-We can run ADMIXTURE multiple times with -s flag specifying random seeds. This is useful determining if ADMIXTURE finds global optima. Pong summarizes modality and provides `check to highlight multimodality` checkbox whitening populations with ancestry matrices agreeing the mode. One can also click on and visualize only one cluster.
+We can run ADMIXTURE multiple times with -s flag specifying random seeds. This is useful determining if ADMIXTURE finds global optima. Pong summarizes modality and provides `check to highlight multimodality` checkbox whitening populations with ancestry matrices agreeing the major mode. One can also click on and visualize only one cluster.
 
 ```{r, engine='bash',eval=FALSE}
-# run admixture multiple times
 K=6
 prefix=H938_Euro.LDprune
-
+# run admixture multiple times
 for r in {1..10}
 do
 admixture -s ${RANDOM} out/H938_Euro.LDprune.bed $K
@@ -123,16 +123,15 @@ for r in {1..10}
 do
 awk -v K=$K -v r=$r -v file=${prefix}.K${K}r${r} 'BEGIN{ \
 printf("K%dr%d\t%d\t%s.Q\n",K,r,K,file)
-}' >> out/${prefix}.multiplerun.Qfilemap
+}' >> out/${prefix}.k6multiplerun.Qfilemap
 done
 # run pong
-pong -m out/${prefix}.multiplerun.Qfilemap -s .99 -i out/H938_Euro.ind2pop
+pong -m out/${prefix}.k6multiplerun.Qfilemap --greedy  -s .9 -i out/H938_Euro.ind2pop
 ```
 
 
-![Visualizing multiple runs of ADMIXTURE](./plot/pong_multiplerun.png)
-
-Here inferred ancestry components for North Italian are different across multiple runs of ADMIXTURE.
+![Visualizing multiple runs of ADMIXTURE](./plot/modes_K=6_2018-10-12_10h6m16s_pong.png)
+With a lenient similarity threshold 0.9 between runs, we see ancestry components for Sardinian, North Italian, and French Basque are still different across multiple runs.
 
 ### Considering different values of $K$
 In a typical analysis, one typically wants to explore the sensitivity of the results to the choice of $K$.  One approach is to run ADMIXTURE with various plausible values of $K$ and compare the performance of results visually and using cross-validation error rates. Here is a piece of `bash` command-line code that will run `ADMIXTURE` for values of $K$ from 2 to 12, and that will build a file with a table of cross-validation error rates per value of $K$.  
@@ -154,23 +153,9 @@ Klow=1
 Khigh=12
 echo '# CV results' > $prefix.CV.txt
 for ((K=$Klow;K<=$Khigh;K++)); do 
-  awk -v K=$K '
-    $1=="CV"{print K,$4}' out/log.$prefix.$K.out >> out/$prefix.CV.txt; 
+  awk -v K=$K '$1=="CV"{print K,$4}' out/log.$prefix.$K.out >> out/$prefix.CV.txt; 
 done
 ```
-and build a Qmapfile for pong:
-```{r, engine='bash', eval = FALSE}
-prefix=H938_Euro.LDprune
-Klow=1
-Khigh=12
-echo '# Qfilemap' > out/$prefix.Qfilemap
-for ((K=$Klow;K<=$Khigh;K++)); \
-do 
-  awk -v K=$K -v prefix=$prefix 'BEGIN{ \
-    printf("K%d\t%d\t%s.%d.Q\n",K,K,prefix,K)
-  }' >> out/$prefix.Qfilemap; 
-done
-```     
 
 Now let's inspect the outputs.  First let's make a plot of the cross-validation error as a function of $K$:
 ```{r, eval = TRUE, fig.width=3.25, fig.height=3}
@@ -178,16 +163,37 @@ tbl = read.table("out/H938_Euro.LDprune.CV.txt")
 plot(tbl$V1,tbl$V2,xlab="K",ylab="Cross-validation error",pch=16,type='l')
 ```
 
-The cross-validation error suggests a single source population can model the data adequately and larger values of $K$ lead to over-fitting.  Let's now inspect the 'pong' outputs. 
+The cross-validation error suggests a single source population can model the data adequately and larger values of $K$ lead to over-fitting. `pong` can also help us visualize ancestry components inferred in different $K$, and number for runs agreeing major mode for a given $K$ is conviently summarized. 
 
 ```{r, engine = 'bash', eval = FALSE}
-pong -m out/H938_Euro.LDprune.Qfilemap -i out/H938_Euro.ind2pop
+# Run for different values of K, each with 10 runs
+prefix=H938_Euro.LDprune
+for r in {1..10}; do for K in {2..12}; 
+do 
+  admixture -s ${RANDOM} out/${prefix}.bed $K
+  mv out/${prefix}.${K}.Q out/${prefix}.K${K}r${r}.Q
+done; done 
+```
+
+Again, we create an input file for `pong`.
+```{r, engine = 'bash', eval = FALSE}
+prefix=H938_Euro.LDprune
+createQmap(){
+local r=$1
+local K=$2
+awk -v K=$K -v r=$r -v file=${prefix}.K${K}r${r} 'BEGIN{ \
+printf("K%dr%d\t%d\t%s.Q\n",K,r,K,file)
+}' >> out/${prefix}.multiplerun.Qfilemap
+}
+
+for K in {2..12}; do for r in {1..10}; do createQmap $r $K; done; done
+
+pong -m out/H938_Euro.LDprune.multiplerun.Qfilemap --greedy  -s .95 -i out/H938_Euro.ind2pop
 ```  
 
-![Example PONG output](./plot/mainviz_2018-9-13_13h10m14s_pong.png)
+![Example PONG output](./plot/mainviz_2018-10-12_10h7m3s_pong.png)
 
 Here we see how as $K$ increases through to $K=6$, the Sardinian, Basque, Adygei, and Russian samples are modeled as descended from unique sources, at $K=7$ and $K=8$ structure within the Sardinian and Basque samples is revealed, though the Basque sub-structure is not stable at higher values of $K$.  The values of $K=9$ and above make increasingly finer scale divisions that are difficult to interpret.  
-
 Overall, it's worth noting that the visual inspection of the results suggests several "real" clusters in the data, though in this case the cross-validation supports a value of $K=1$.  This highlights a long-standing known issue with admixutre modeling: the selection of $K$ is a difficult problem to automate in a way that is robust.  
 
 ### Some advanced options
