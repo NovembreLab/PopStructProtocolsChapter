@@ -196,7 +196,7 @@ plot(tbl$V1, tbl$V2, xlab = "K", ylab = "Cross-validation error",
      pch = 16, type = "l")
 ```
 
-The cross-validation error suggests a single source population can model the data adequately and larger values of $K$ lead to over-fitting. `pong` can also help us visualize ancestry components inferred in different $K$, and number of runs agreeing with the major mode for a given $K$ is conviently summarized. 
+The cross-validation error suggests a single source population can model the data adequately and larger values of $K$ lead to over-fitting. `pong` can also help us visualize ancestry components inferred at different $K$, and the number of runs agreeing with the major mode for a given $K$ is conveniently shown. 
 
 ```{r, engine = 'bash', eval = FALSE}
 # Run for different values of K, each with 10 runs
@@ -226,7 +226,9 @@ pong -m out/H938_Euro.LDprune.multiplerun.Qfilemap --greedy \
 
 ![Example PONG output showing results from across a range of K values (with ten ADMIXTURE runs per K value).](./plot/mainviz_2018-10-12_10h7m3s_pong.png){ width=5.4inch}
 
-Here we see how as $K$ increases through to $K=6$, the Sardinian, Basque, Adygei, and Russian samples are modeled as descended from unique sources, at $K=7$ and $K=8$ structure within the Sardinian and Basque samples is revealed, though the Basque sub-structure is not stable at higher values of $K$.  The values of $K=9$ and above make increasingly finer scale divisions that are difficult to interpret, and major modes only consist of one to three runs.  
+Here we see how as $K$ increases through to $K=6$, the Sardinian, Basque, Adygei, and Russian samples are modeled as descended from unique sources, at $K$ of 7, 8, 9 reveal structure within the Sardinian, Orcadian, and Basque samples is revealed, though for each the substructure is not fully stable at higher values of $K$.  The values of $K=10$ and above make increasingly finer scale divisions that are difficult to interpret, and major modes only consist of one to three runs.  
+
+XXX TODO Update discussion after figure is updated XXX 
 
 Overall, it's worth noting that the visual inspection of the results suggests several "real" clusters in the data, though in this case the cross-validation supports a value of $K=1$.  This highlights a long-standing known issue with admixutre modeling: the selection of $K$ is a difficult problem to automate in a way that is robust.  
 
