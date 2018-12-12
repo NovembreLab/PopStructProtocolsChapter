@@ -169,7 +169,7 @@ pong -m out/${prefix}.k6multiplerun.Qfilemap --greedy -s .95 \
 ```
 
 
-```{r, eval = TRUE, echo=FALSE, warning=FALSE,message=FALSE, out.width = "100%", fig.show='asis', fig.cap="PONG plot summarizing multiple ADMIXTURE runs with different random starting points.  The top row shows the major mode (supported by 8 out of 10 runs as indicated in the blue text).  The next two rows show two other solutions found by ADMIXTURE in 3 and 1 runs respectively."}
+```{r, eval = TRUE, echo=FALSE, warning=FALSE,message=FALSE, out.width = "100%", fig.show='asis', fig.cap="PONG plot summarizing multiple ADMIXTURE runs with different random starting points.  The top row shows the major mode (supported by 6 out of 10 runs as indicated in the blue text).  The next three rows show three other solutions found by ADMIXTURE in 2, 1, and 1 runs respectively."}
 library(knitr)
 include_graphics("./plot/H938_Euro_LDprune_K6_10runs.png", dpi = NA)
 ```
