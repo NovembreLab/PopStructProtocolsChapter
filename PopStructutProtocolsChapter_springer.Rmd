@@ -30,6 +30,7 @@ output:
     keep_tex: true
 header-includes:
  \usepackage{float}
+ \usepackage{url}
  \floatplacement{figure}{H}
 ---
 
