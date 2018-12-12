@@ -25,7 +25,12 @@ abstract: |
   Population structure is a commonplace feature of genetic variation data, and it has importance in numerous application areas, including evolutionary genetics, conservation genetics, and human genetics. Understanding the structure in a sample is necessary before more sophisticated analyses are undertaken. Here we provide a protocol for running principal component analysis (PCA) and admixture proportion inference - two of the most commonly used approaches in describing population structure. Along with hands-on examples with CEPH-Human Genome Diversity Panel and pragmatic caveats, readers will be able to analyze, and visualize population structure on their own data.
 
 bibliography: references.bib
-output: rticles::springer_article
+output: 
+  rticles::springer_article:
+    keep_tex: true
+header-includes:
+ \usepackage{float}
+ \floatplacement{figure}{H}
 ---
 
 ```{r setup, include=FALSE}
@@ -62,11 +67,11 @@ For running some simple examples below, we will first create a subset of the HGD
 ```{r, engine = 'bash', eval = FALSE}
 awk '$3=="Adygei"||$3=="French_Basque"||$3=="French"|| \
 $3=="North_Italian"||$3=="Orcadian"||$3=="Russian"|| \ 
-$3=="Sardinian"||$3=="Tuscan" {print $0}' raw_input/H938.clst.txt \
-> out/Euro.clst.txt
+$3=="Sardinian"||$3=="Tuscan" {print $0}' \
+raw_input/H938.clst.txt > out/Euro.clst.txt
 
-plink --bfile raw_input/H938 --keep out/Euro.clst.txt --make-bed \
---out out/H938_Euro
+plink --bfile raw_input/H938 --keep out/Euro.clst.txt \ 
+--make-bed --out out/H938_Euro
 ```
 
 ## Filter out SNPs to remove linkage disequilibrium (LD)  
@@ -83,54 +88,57 @@ plink --bfile out/H938_Euro --extract plink.prune.in --make-bed \
 ## Running `ADMIXTURE`
 
 ### An example run with visualization 
-The `ADMIXTURE` software (v 1.3.0 here) comes as a pre-compiled binary executable file for either Linux or Mac operating systems. To install, simply download the package and move the executable into your standard execution path (e.g. '/usr/local/bin' on many linux systems).  Once installed, it is straightforward to run `ADMIXTURE` with a fixed number of source populations, commonly denoted by $K$. For example, to get started let's run ADMIXTURE with $K$=8 as there are 8 distinctly labelled populations in the dataset:
+The `ADMIXTURE` software (v 1.3.0 here) comes as a pre-compiled binary executable file for either Linux or Mac operating systems. To install, simply download the package and move the executable into your standard execution path (e.g. '/usr/local/bin' on many linux systems).  Once installed, it is straightforward to run `ADMIXTURE` with a fixed number of source populations, commonly denoted by $K$. For example, to get started let's run ADMIXTURE with $K$=6:
 ```{r, engine = 'bash', eval = FALSE}
-admixture out/H938_Euro.LDprune.bed 8
+admixture out/H938_Euro.LDprune.bed 6
 ```    
 `ADMIXTURE` is a maximum-likelihood based method, so as the method runs, you will see updates to the log-likelihood as it converges on a solution for the ancestry proportions and allele frequencies that maximize the likelhood function.  The algorithm will stop when the difference between successive iterations is small (the 'delta' value takes a small value).  A final output is an estimated $F_{ST}$ value [@Kent09] between each of the source populations, based on the inferred allele frequencies.  These estimates reflect how differentiated the source populations are, which is important for understanding whether the population structure observed in a sample is substantial or not (values closer to 0 reflect less population differentiation).
 
 After running, `ADMIXTURE` produces two major output files.  The file with suffix `.P` contains an $L \times K$ table of the allele frequencies inferred for each SNP in each population.  The file with suffix `.Q` contains an $N \times K$ table of inferred individual ancestry proportions from the $K$ ancestral populations, with one row per individual. 
 
-For our example dataset with $K$=8, this will be a file called `H938.LDpruned.8.Q`. This file can be used to generate a plot showing individual ancestry. In `R`, this can be done using the following commands:
-```{r, eval = TRUE, fig.height=2, fig.width=4.5,fig.cap="Initial plot of the ADMIXTURE results for K=8 using R base graphics."}
+For our example dataset with $K$=6, this will be a file called `H938.LDpruned.6.Q`. This file can be used to generate a plot showing individual ancestry. In `R`, this can be done using the following commands:
+```{r, eval = TRUE, fig.height=2, fig.width=4.5,fig.cap="Initial plot of the ADMIXTURE results for K=6 using R base graphics."}
 library(RColorBrewer)
-tbl <- read.table("out/H938_Euro.LDprune.8.Q")
+tbl <- read.table("out/H938_Euro.LDprune.6.Q")
 par(mar = c(1.5, 4, 2.5, 2),cex.lab=0.75,cex.axis=0.6)
 barplot(t(as.matrix(tbl)),
-  col = brewer.pal(8, "Set1"), ylab = "Anc Proportions",
+  col = brewer.pal(6, "Set1"), ylab = "Anc Proportions",
   border = NA, space = 0
 )
 ```
 
-Each thin vertical line in the barplot represents one individual and each color represents one inferred ancestral population. The length of each color in a vertical bar represents the proportion of that individual's ancestry that is derived from the inferred ancestral population corresponding to that color. The above image suggests there are some genetic clusters in the data, but it's not a well organized data display. 
+Each thin vertical line in the barplot represents one individual and each color represents one inferred ancestral population. The length of each color in a vertical bar represents the proportion of that individual's ancestry that is derived from the inferred ancestral population corresponding to that color. The above image suggests there are some genetic clusters in the data, but it's not a well-organized data display. 
 
-To improve the visualization, one can use a package dedicated to plotting ancestry proportions [@Rosenberg04; @Kopelman15; @Behr16]. Here we use a post-processing tool `pong` [@Behr16], which visualizes individual ancestry with similarity between individuals within clusters. You will most likely want to install 'pong' on a local machine as it initializes a local web server to display the results.  
+To improve the visualization, one can use a package dedicated to plotting ancestry proportions [@Rosenberg04; @Kopelman15; @Behr16]. Here we use a post-processing tool `pong` [@Behr16], which visualizes individual ancestry with similarity between individuals within clusters. You will most likely want to install `pong` on a local machine as it initializes a local web server to display the results.  
 
-To run `pong` requires setting up a few files: 1) an `ind2pop` file that maps individuals to populations; 2) a `Qfilemap` file that points `pong` towards which '.Q' files to display; These are easy to build up from the command-line using the `Euro.clst.txt` file we built above, and an `awk` command to output tab-seperated text to a file with the `Qfilemap` suffix added to whatever file prefix we're using to organize our runs:
+To run `pong` requires setting up a few files: 1) an `ind2pop` file that maps individuals to populations; 2) a `Qfilemap` file that points `pong` towards which '.Q' files to display; These are easy to build up from the command-line using the `Euro.clst.txt` file we built above, and an `awk` command to output tab-separated text to a file with the `Qfilemap` suffix added to whatever file prefix we're using to organize our runs:
 
 ```{r, engine = 'bash', eval = FALSE}
 cut -d' ' -f3 out/Euro.clst.txt > out/H938_Euro.ind2pop
-FILEPREFIX=out/H938_Euro.LDPrune
-K=8
+FILEPREFIX=H938_Euro.LDPrune
+K=6
 awk -v K=$K -v file=$FILEPREFIX 'BEGIN{ \
 printf("ExampleRun\t%d\t%s.%d.Q\n",K,file,K) 
-}' > $FILEPREFIX.Qfilemap 
+}' > out/$FILEPREFIX.Qfilemap 
 ```
-Note when building the `.Qfilemap` one needs to use tabs to seperate the columns for `pong` to read the file correctly.
+Note when building the `.Qfilemap` one needs to use tabs to separate the columns for `pong` to read the file correctly.
 
 Then to run `pong`, we use following command:
 ```{r, engine = 'bash', eval = FALSE}
 pong -m out/H938_Euro.LDprune.Qfilemap -i out/H938_Euro.ind2pop
 ```       
-and open a web browser to `http://localhost:4000/` to view the results. 
+We open a web browser to `http://localhost:4000/` to view the results. 
 
-Here's  an example of what you should see:
+Here's an example of what you should see:
 
-![Plot of the ADMIXTURE results for K=8 using PONG.](./plot/H938_Euro_LDprune_K8.png){width=5.4inch}
+```{r, eval = TRUE, echo=FALSE, warning=FALSE,message=FALSE, out.width = "100%", fig.show='asis', fig.cap="Plot of the ADMIXTURE results for K=6 using PONG."}
+library(knitr)
+include_graphics("./plot/H938_Euro_LDprune_K6.png", dpi = NA)
+```
 
-From this visualization we can see the admixture model fits most individuals of the Adygei, Orcadian, and Russian samples as being derived each from a single source population (represented by orange, green, and blue respectively); the Sardinian and the French Basque samples are modeled as comprising individuals from two source populations each (yellow/red for Sardinia, brown/pink for French Basque); and the French, Tuscan, and North Italian samples are generally estimated to have a majority component of ancestry from a single source population ('purple') though with notable admixture with other sources.  A first conclusions is that the population labels do not capture the complexity of the population structure.  There is apparent cryptic structure within some samples (e.g., Sardinia) and minimal differentiation between other samples (North Italian and Tuscan samples for instance).  
+From this visualization, we can see the admixture model fits most individuals of the Adygei, Sardinian, Russian, French Basque samples as being derived each from a single source population (represented by purple, red, green, and yellow respectively). The French, Tuscan, and North Italian samples are generally estimated to have a majority component of ancestry from a single source population (blue) though with admixture with other sources. A first conclusions is that the population labels do not capture the complexity of the population structure.  There is apparent cryptic structure within some samples (e.g., Orcadian) and minimal differentiation between other samples (North Italian and Tuscan samples for instance).  
 
-Because ADMIXTURE is a "greedy", "hill-climbing"" optimization algorithm it is good practice to do multiple runs from differet initial random starting points.  We can do this by using the -s flag to specify the random seed for each ADMIXTURE run. 
+Because ADMIXTURE is a "greedy", "hill-climbing"" optimization algorithm it is good practice to do multiple runs from different initial random starting points.  We can do this by using the -s flag to specify the random seed for each ADMIXTURE run. 
 
 ```{r, engine = 'bash', eval = FALSE}
 K=6
@@ -143,8 +151,10 @@ mv out/${prefix}.${K}.Q out/${prefix}.K${K}r${r}.Q
 done
 ```
 
-Pong has nice functionality for summarizing the output of the multiple ADMIXTURE runs.  It can collect similar solutions into "modes" and display them in ranked order of the number of runs supporting each.  In the interactive version you use the `check to highlight multimodality` checkbox and whiten populations with ancestry matrices agreeing with the major mode. One can also click on and visualize only one cluster.  Here we set up the PONG input files and show an example output. 
+Pong has nice functionality for summarizing the output of the multiple ADMIXTURE runs.  It can collect similar solutions into "modes" and display them in ranked order of the number of runs supporting each.  In the interactive version, you use the `check to highlight multimodality` checkbox and whiten populations with ancestry matrices agreeing with the major mode. One can also click on and visualize only one cluster.  Here we set up the PONG input files and show an example output. 
 ```{r, engine = 'bash', eval = FALSE}
+K=6
+prefix=H938_Euro.LDprune
 # create a pong parameter file
 for r in {1..10}
 do
@@ -153,15 +163,18 @@ printf("K%dr%d\t%d\t%s.Q\n",K,r,K,file)
 }' >> out/${prefix}.k6multiplerun.Qfilemap
 done
 # run pong
-pong -m out/${prefix}.k6multiplerun.Qfilemap --greedy -s .9 \
+pong -m out/${prefix}.k6multiplerun.Qfilemap --greedy -s .95 \
 -i out/H938_Euro.ind2pop
 ```
 
 
-![PONG plot summarizing multiple ADMIXTURE runs with different random starting points.  The top row shows the major mode (supported by 8 out of 10 runs as indicated in the blue text).  The next two rows show two other solutions found by ADMIXTURE in 3 and 1 runs respectively.](./plot/modes_K=6_2018-10-12_10h6m16s_pong.png){width=5.4inch}
+```{r, eval = TRUE, echo=FALSE, warning=FALSE,message=FALSE, out.width = "100%", fig.show='asis', fig.cap="PONG plot summarizing multiple ADMIXTURE runs with different random starting points.  The top row shows the major mode (supported by 8 out of 10 runs as indicated in the blue text).  The next two rows show two other solutions found by ADMIXTURE in 3 and 1 runs respectively."}
+library(knitr)
+include_graphics("./plot/H938_Euro_LDprune_K6_10runs.png", dpi = NA)
+```
 
-The resulting figure shows that 8 out of 10 runs converged to the same mode. Interestingly this is not the solution our single runs above found. For instance, the appearance of STRUCTURE within Sardinia is not stable across runs, and is missing from the major mode.  Another difference from our initial runn is the major mode models the North Italian and Tuscan samples as a unique cluster.  The third mode (supporting by just one run) inferred sub-structure within the French Basque sample. This instability in the solution is a hint that the ADMIXTURE model with K=8 is not a perfect fit to this data.  
 
+The resulting figure shows that 6 out of 10 runs converged to the same mode. We can observe the appearance of STRUCTURE within Sardinia is not stable across runs, and is missing from the major mode.  Another difference from our initial run is the major mode models the North Italian and Tuscan samples as a mostly unadmixed, while all 3 minor modes model the two population as highly admixed. The fourth mode (supporting by just one run) inferred sub-structure within the French Basque sample. This instability in the solution is a hint that the ADMIXTURE model with K=6 is not a perfect fit to this data.  
 
 ### Considering different values of $K$
 In a typical analysis, one typically wants to explore the sensitivity of the results to the choice of $K$.  One approach is to run ADMIXTURE with various plausible values of $K$ and compare the performance of results visually and using cross-validation error rates. Here is a piece of `bash` command-line code that will run `ADMIXTURE` for values of $K$ from 2 to 12, and that will build a file with a table of cross-validation error rates per value of $K$.  
@@ -224,9 +237,13 @@ pong -m out/H938_Euro.LDprune.multiplerun.Qfilemap --greedy \
 -s.95 -i out/H938_Euro.ind2pop
 ```  
 
-![Example PONG output showing results from across a range of K values (with ten ADMIXTURE runs per K value).](./plot/mainviz_2018-10-12_10h7m3s_pong.png){ width=5.4inch}
 
-Here we see how as $K$ increases through to $K=6$, the Sardinian, Basque, Adygei, and Russian samples are modeled as descended from unique sources, at $K$ of 7, 8, 9 reveal structure within the Sardinian, Orcadian, and Basque samples is revealed, though for each the substructure is not fully stable at higher values of $K$.  The values of $K=10$ and above make increasingly finer scale divisions that are difficult to interpret, and major modes only consist of one to three runs.  
+```{r, eval = TRUE, echo=FALSE, warning=FALSE,message=FALSE, out.width = "100%", fig.show='asis', fig.cap="Example PONG output showing results from across a range of K values (with ten ADMIXTURE runs per K value)"}
+library(knitr)
+include_graphics("./plot/H938_Euro_LDprune_12K_10r.png", dpi = NA)
+```
+
+Here we see how as $K$ increases through to $K=6$, the Sardinian, Basque, Adygei, and Russian samples are modeled as descended from unique sources, at $K$ of 7, 8, 9 reveal structures within the Sardinian, Orcadian, and Basque samples is revealed, though for each the substructure is not fully stable at higher values of $K$.  The values of $K=10$ and above make increasingly finer scale divisions that are difficult to interpret, and major modes only consist of one to three runs.  
 
 XXX TODO Update discussion after figure is updated XXX 
 
@@ -276,7 +293,7 @@ smartpca -p ./out/H938_Euro.LDprune.par
 You will find the output files in the `out` sub-directory as specified in the parameter file.
 
 ### Plotting PCA results with PCAviz
-The PCAviz package can be found at https://github.com/NovembreLab/PCAviz. It provides a simple interface for quickly creating plots from PCA results. It encodes several of our favored best practices for plotting PCA (such as using abberviations for point characters and plotting median positions of each labelled group).  To install the package use:
+The PCAviz package can be found at https://github.com/NovembreLab/PCAviz. It provides a simple interface for quickly creating plots from PCA results. It encodes several of our favored best practices for plotting PCA (such as using abbreviations for point characters and plotting median positions of each labelled group).  To install the package use:
 ```{r, eval=FALSE,echo=TRUE}
 install.packages("devtools")
 devtools::install_github("NovembreLab/PCAviz",
@@ -285,7 +302,7 @@ devtools::install_github("NovembreLab/PCAviz",
 
 The following command in `R` generates plots showing each individual sample's position in the PCA space and the median position of each labelled group in PCA space:
 
-```{r, eval = TRUE, echo=TRUE, results='hide',warning=FALSE,message=FALSE, fig.height=10, fig.width=10, out.width = "100%", fig.cap="Pairwise plots of PC values generated using the PCAviz package."}
+```{r, eval = TRUE, echo=TRUE, results='hide',warning=FALSE,message=FALSE, fig.height=10, fig.width=10, out.width = "100%", fig.cap="Pairwise plots of PC scores generated using the PCAviz package."}
 library(PCAviz)
 library(cowplot)
 prefix <- "out/H938_Euro.LDprune"
@@ -357,9 +374,9 @@ plot4 <- plot(hgdp,
 plot_grid(plot1, plot2, plot3, plot4)
 ```
 
-First one may notice several populations are separated with PC1 and PC2, with the more isolated populations being those that were most distinguished from the others by `ADMIXTURE`. PC4 distinguishes a subset of Orcadian individuals and PC5 distinguishes two Adygei indiviuals.  PC6 corresponds to the cryptic structure observed within Sardinians in the `ADMIXTURE` analysis. 
+First one may notice several populations are separated with PC1 and PC2, with the more isolated populations being those that were most distinguished from the others by `ADMIXTURE`. PC4 distinguishes a subset of Orcadian individuals and PC5 distinguishes two Adygei individuals.  PC6 corresponds to the cryptic structure observed within Sardinians in the `ADMIXTURE` analysis. 
 
-As an alternative visualization it can be helpful to see the distribution of PC coordinates per population for each labelled group in the data:
+As an alternative visualization, it can be helpful to see the distribution of PC coordinates per population for each labelled group in the data:
 ```{r, eval = TRUE,fig.height=8,fig.width=8, out.width = "100%",fig.cap="Violin plots of PC values generated using the PCAviz package."}
 pcaviz_violin(hgdp, pc.dims = paste0("PC", c(1:3)), 
               plot.grid.params = list(nrow = 3))
@@ -395,7 +412,9 @@ plot_grid(prow, plot_legend, ncol = 1, rel_heights = c(1, .2))
 
 The proportion of total variance explained by each PC is a useful metric for understanding structure in a sample and for evaluating how many PCs one might want to include in downstream analyses. This can be computed as  $\lambda_i / \sum_{k} \lambda_k$, with $\lambda_i$ being eigenvalues in decreasing order, and is plotted below:
 ```{r, eval = TRUE, echo=TRUE,warnings=FALSE,fig.width=3, fig.height=3,fig.cap="Proportion of variance explained by each PC.  Plot generated using the PCAviz package."}
-screeplot(hgdp, type = "pve") + ylim(0, 0.018) +
+screeplot(hgdp, type = "pve") + 
+  ylim(0, 0.018) +
+  ylab('Proportion of Variance Explained') +
   theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
   theme(axis.line = element_line(size = 1, linetype = "solid"))
 ```
@@ -405,9 +424,9 @@ The results show that the top PCs only explain a small fraction of the variance 
 
 #  Discussion
 
-Our protocol above is relatively straightfoward and presents the most basic implementation of these analyses. Each analysis sofware (`ADMIXTURE` and `smartpca`) and each visualization package (`pong` and `PCAviz`) contain numerous other options that may be suitable for specific analyses and we encourage the readers to spend time in the manuals of each.  Nonetheless, what we have presented is a useful start and a standard pipeline that we use in our research.
+Our protocol above is relatively straightforward and presents the most basic implementation of these analyses. Each analysis sofware (`ADMIXTURE` and `smartpca`) and each visualization package (`pong` and `PCAviz`) contain numerous other options that may be suitable for specific analyses and we encourage the readers to spend time in the manuals of each.  Nonetheless, what we have presented is a useful start and a standard pipeline that we use in our research.
 
-Two broad perspecives we find helpful useful to keep in mind are: 1) How the admixture model and PCA framework are related to each other indirectly as different forms of sparse factor analysis [@Engelhardt10]; 2) How the PCA framework in particular can be considered as a form of efficient data compression.  Both of these perspectives can be helpful in interpreting the outputs of the methods and for appreciating how these approaches best serve as helpful visual exploratory tools for analyzing structure in genetic data.  These methods are ultimately relatively simple statistical tools being used to summarize complex realities.  They are part of the toolkit for analysis, and often are extremely useful for framing specific models of population structure that can be further investigated using more detailed and explicit approaches (such as those based on coalescent or diffusion theory, Chapters 7 on MSMC and 8 on CoalHMM). 
+Two broad perspectives we find helpful useful to keep in mind are: 1) How the admixture model and PCA framework are related to each other indirectly as different forms of sparse factor analysis [@Engelhardt10]; 2) How the PCA framework in particular can be considered as a form of efficient data compression.  Both of these perspectives can be helpful in interpreting the outputs of the methods and for appreciating how these approaches best serve as helpful visual exploratory tools for analyzing structure in genetic data.  These methods are ultimately relatively simple statistical tools being used to summarize complex realities.  They are part of the toolkit for analysis, and often are extremely useful for framing specific models of population structure that can be further investigated using more detailed and explicit approaches (such as those based on coalescent or diffusion theory, Chapters 7 on MSMC and 8 on CoalHMM). 
 
 
 # References
