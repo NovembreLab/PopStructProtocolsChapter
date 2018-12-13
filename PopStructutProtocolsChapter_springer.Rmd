@@ -98,12 +98,12 @@ admixture out/H938_Euro.LDprune.bed 6
 After running, `ADMIXTURE` produces two major output files.  The file with suffix `.P` contains an $L \times K$ table of the allele frequencies inferred for each SNP in each population.  The file with suffix `.Q` contains an $N \times K$ table of inferred individual ancestry proportions from the $K$ ancestral populations, with one row per individual. 
 
 For our example dataset with $K$=6, this will be a file called `H938.LDpruned.6.Q`. This file can be used to generate a plot showing individual ancestry. In `R`, this can be done using the following commands:
-```{r, eval = TRUE, fig.height=2, fig.width=4.5,fig.cap="Initial plot of the ADMIXTURE results for K=6 using R base graphics."}
+```{r, eval = TRUE, fig.height=2, fig.width=4.5,fig.cap="Initial rough plot of the ADMIXTURE results for K=6 using R base graphics."}
 library(RColorBrewer)
 tbl <- read.table("out/H938_Euro.LDprune.6.Q")
 par(mar = c(1.5, 4, 2.5, 2),cex.lab=0.75,cex.axis=0.6)
 barplot(t(as.matrix(tbl)),
-  col = brewer.pal(6, "Set1"), ylab = "Anc Proportions",
+  col = brewer.pal(6, "Set1"), ylab = "Anc. Proportions",
   border = NA, space = 0
 )
 ```
@@ -175,10 +175,10 @@ include_graphics("./plot/H938_Euro_LDprune_K6_10runs.png", dpi = NA)
 ```
 
 
-The resulting figure shows that 6 out of 10 runs converged to the same mode. We can observe the appearance of STRUCTURE within Sardinia is not stable across runs, and is missing from the major mode.  Another difference from our initial run is the major mode models the North Italian and Tuscan samples as a mostly unadmixed, while all 3 minor modes model the two population as highly admixed. The fourth mode (supporting by just one run) inferred sub-structure within the French Basque sample. This instability in the solution is a hint that the ADMIXTURE model with K=6 is not a perfect fit to this data.  
+The resulting figure shows that 6 out of 10 runs converged to the same mode, which appears equivalent to our initial run above. We observe the appearance of structure within Sardinia in the second and third modes.  The original run had North Italian and Tuscan samples as a mostly unadmixed, while all 3 minor modes model the two population as highly admixed. The fourth mode (supporting by just one run) inferred sub-structure within the French Basque sample. This instability in the solution is a hint that the ADMIXTURE model with K=6 is not a perfect fit to this data.  
 
 ### Considering different values of $K$
-In a typical analysis, one typically wants to explore the sensitivity of the results to the choice of $K$.  One approach is to run ADMIXTURE with various plausible values of $K$ and compare the performance of results visually and using cross-validation error rates. Here is a piece of `bash` command-line code that will run `ADMIXTURE` for values of $K$ from 2 to 12, and that will build a file with a table of cross-validation error rates per value of $K$.  
+In a typical analysis, one wants to explore the sensitivity of the results to the choice of $K$.  One approach is to run ADMIXTURE with various plausible values of $K$ and compare the performance of results visually and using cross-validation error rates. Here is a piece of `bash` command-line code that will run `ADMIXTURE` for values of $K$ from 2 to 12, and that will build a file with a table of cross-validation error rates per value of $K$.  
 
 ```{r, engine = 'bash', eval = FALSE}
 # Run for different values of K
@@ -210,7 +210,9 @@ plot(tbl$V1, tbl$V2, xlab = "K", ylab = "Cross-validation error",
      pch = 16, type = "l")
 ```
 
-The cross-validation error suggests a single source population can model the data adequately and larger values of $K$ lead to over-fitting. `pong` can also help us visualize ancestry components inferred at different $K$, and the number of runs agreeing with the major mode for a given $K$ is conveniently shown. 
+The cross-validation error suggests a single source population can model the data adequately and larger values of $K$ lead to over-fitting. 
+
+To inspect further, we can use the `pong` software to visualize the ancestry components inferred at different $K$ across sevderal runs.  We need to set-up some the results and input files first.
 
 ```{r, engine = 'bash', eval = FALSE}
 # Run for different values of K, each with 10 runs
@@ -244,11 +246,9 @@ library(knitr)
 include_graphics("./plot/H938_Euro_LDprune_12K_10r.png", dpi = NA)
 ```
 
-Here we see how as $K$ increases through to $K=6$, the Sardinian, Basque, Adygei, and Russian samples are modeled as descended from unique sources, at $K$ of 7, 8, 9 reveal structures within the Sardinian, Orcadian, and Basque samples is revealed, though for each the substructure is not fully stable at higher values of $K$.  The values of $K=10$ and above make increasingly finer scale divisions that are difficult to interpret, and major modes only consist of one to three runs.  
+Here we find how as $K$ increases through to $K=6$, the Sardinian, Basque, Adygei, and Russian samples are typically modeled as descended from unique sources, and at $K$ of 7, 8, 9 we find structure within the Sardinian, Russian, Orcadian, and Basque samples is revealed, though for each, the substructure is not very stable.  The values of $K=10$ and above make increasingly finer scale divisions that are difficult to interpret, and the major modesfor $K=7$ and up only consist of one to three runs, suggesting a very multi-modal likelihood surface and a poor resolution of the population structure.  
 
-XXX TODO Update discussion after figure is updated XXX 
-
-Overall, it's worth noting that the visual inspection of the results suggests several "real" clusters in the data, though in this case the cross-validation supports a value of $K=1$.  This highlights a long-standing known issue with admixutre modeling: the selection of $K$ is a difficult problem to automate in a way that is robust.  
+Overall, its interesting to note that the visual inspection of the results suggests several "real" clusters in the data, supported by an alignment of the clustering with known population labels, even though the cross-validation supports a value of $K=1$.  This highlights a long-standing known issue with admixutre modeling: the selection of $K$ is a difficult problem to automate in a way that is robust.  
 
 ### Some advanced options
 
