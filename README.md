@@ -1,6 +1,4 @@
-# PopStructProtocolsChapter
-
-Repo for the book chapter _Exploring population structure with admixture models and principal components analysis_ .
+### Repo for the book chapter _Exploring population structure with admixture models and principal components analysis_ .
 
 
 To knit a pdf file, please:
