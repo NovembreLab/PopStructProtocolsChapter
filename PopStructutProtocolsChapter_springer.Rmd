@@ -429,5 +429,5 @@ Our protocol above is relatively straightforward and presents the most basic imp
 
 Two broad perspectives we find helpful useful to keep in mind are: 1) How the admixture model and PCA framework are related to each other indirectly as different forms of sparse factor analysis [@Engelhardt10]; 2) How the PCA framework in particular can be considered as a form of efficient data compression.  Both of these perspectives can be helpful in interpreting the outputs of the methods and for appreciating how these approaches best serve as helpful visual exploratory tools for analyzing structure in genetic data.  These methods are ultimately relatively simple statistical tools being used to summarize complex realities.  They are part of the toolkit for analysis, and often are extremely useful for framing specific models of population structure that can be further investigated using more detailed and explicit approaches (such as those based on coalescent or diffusion theory, Chapters 7 on MSMC and 8 on CoalHMM). 
 
-
+\newpage
 # References
