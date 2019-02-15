@@ -1,5 +1,5 @@
 % !TeX program = pdfLaTeX
-\documentclass[smallextended]{svjour3}       % onecolumn (second format)
+\documentclass[smallextended]{svmult}       % onecolumn (second format)
 %\documentclass[twocolumn]{svjour3}          % twocolumn
 %
 \smartqed  % flush right qed marks, e.g. at end of proof
@@ -81,36 +81,19 @@ components analysis }
 
     \titlerunning{Exploring population structure with ADMIXTURE and PCA}
 
-\author{  Chi-Chun Liu \and  Suyash Shringapure \and  Kenneth Lange \and  John Novembre \and  }
+%\author{  Chi-Chun Liu \and  Suyash Shringapure \and  Kenneth Lange \and  John Novembre }
 
 
-\institute{
-        Chi-Chun Liu \at
-     Department of Human Genetics, University of Chicago, Chicago, IL. \\
-     %  \\
-%             \emph{Present address:} of F. Author  %  if needed
-    \and
-        Suyash Shringapure \at
-     23andme, Mountain View, CA. \\
-     %  \\
-%             \emph{Present address:} of F. Author  %  if needed
-    \and
-        Kenneth Lange \at
-     Departments of Biomathematics, Human Genetics, and Statistics.
- University of California, Los Angeles, Los Angeles, CA. \\
-     %  \\
-%             \emph{Present address:} of F. Author  %  if needed
-    \and
-        John Novembre \at
-     Department of Human Genetics, Ecology and Evolution. University of
- Chicago. Chicago, IL. \\
-     %  \\
-%             \emph{Present address:} of F. Author  %  if needed
-    \and
-    }
-
-\date{Received: date / Accepted: date}
-% The correct dates will be entered by the editor
+%\institute{
+%        Chi-Chun Liu \at Department of Human Genetics, University of Chicago, Chicago, IL.
+%    \and
+%        Suyash Shringapure \at 23andme, Mountain View, CA.
+%    \and
+%        Kenneth Lange \at Departments of Biomathematics, Human Genetics, and Statistics.
+% University of California, Los Angeles, Los Angeles, CA.
+%    \and
+%        John Novembre \at Department of Human Genetics, Ecology and Evolution. University of  Chicago. Chicago, IL.
+%    }
 
 
 \maketitle
@@ -126,16 +109,15 @@ inference - two of the most commonly used approaches in describing
 population structure. Along with hands-on examples with CEPH-Human
 Genome Diversity Panel and pragmatic caveats, readers will be able to
 analyze, and visualize population structure on their own data.
-\\
-\keywords{
-        population structure \and
-        admixture \and
-        principal component analysis \and
-        population stratification \and
-    }
-
-
 \end{abstract}
+
+%\keywords{
+%        population structure \and
+%        admixture \and
+%        principal component analysis \and
+%        population stratification \and
+%    }
+
 
 
 \def\spacingset#1{\renewcommand{\baselinestretch}%
@@ -158,11 +140,9 @@ two populations requires knowing two populations even exist and which
 individuals belong to each.
 
 Two of the most commonly used approaches to describe population
-structure in a sample are principal components analysis (Menozzi,
-Piazza, and Cavalli-Sforza 1978; Cavalli-Sforza, Menozzi, and Piazza
-1994; Price et al. 2006; Patterson, Price, and Reich 2006) and admixture
-proportion inference (Pritchard, Stephens, and Donnelly 2000; Novembre
-2016). In brief, principal components analysis reduces a
+structure in a sample are principal components analysis \cite{Menozzi78,CavSforza94,Price06,Patterson06} and admixture
+proportion inference \cite{Pritchard00,Novembre16}.
+In brief, principal components analysis reduces a
 multi-dimensional dataset to a much smaller number of dimensions that
 allows for visual exploration and compact quantitative summaries. In its
 application to genetic data, the numerous genotypes observed per
@@ -178,12 +158,8 @@ The history and basic behaviors of both these approaches have been
 written about extensively, including by some of us, and so we refer
 readers to several previous publications to learn the basic background
 and interpretative nuances of these approaches and their derivatives
-(Pritchard, Stephens, and Donnelly 2000; Falush, Stephens, and Pritchard
-2003; Noah A Rosenberg et al. 2005; Hubisz et al. 2009; Raj, Stephens,
-and Pritchard 2014; Novembre 2014; Falush, Dorp, and Lawson 2016; David
-H Alexander, Novembre, and Lange 2009; David H. Alexander and Lange
-2011; Price et al. 2006; Patterson, Price, and Reich 2006; Novembre and
-Stephens 2008; McVean 2009; Novembre and Peter 2016). Here, in the
+\cite{Pritch00,Falush03,Rosenberg05,Hubisz09,Raj14,Novembre14,Falush16,Alexander09,Alexander11,Price06,Patterson06,Novembre08,McVean09,Novembre16}.
+Here, in the
 spirit of this volume, we provide a protocol for running these analyses
 and share some pragmatic caveats that do not always arise in more
 abstract discussions regarding these methods.
@@ -191,32 +167,31 @@ abstract discussions regarding these methods.
 \section{Materials}\label{materials}
 
 The protocol we present is based on two pieces of software: 1) the
-\texttt{ADMIXTURE} software that our team developed (David H Alexander,
-Novembre, and Lange 2009) for efficiently estimating admixture
+\texttt{ADMIXTURE} software that our team developed \cite{Alexander09}
+for efficiently estimating admixture
 proportions in the ``Pritchard-Stephens-Donnelly'' model of admixture
-(Pritchard, Stephens, and Donnelly 2000; Novembre 2016). 2) The
+\cite{Pritchard00,Novembre16}. 2) The
 \texttt{smartpca} software developed by Nick Patterson and colleagues
-for carrying out PCA (Price et al. 2006). Both of these pieces of
+for carrying out PCA \cite{Price06}. Both of these pieces of
 software are used widely. We also pair them with downstream tools for
-visualization, in particular \texttt{pong} (Behr et al. 2016), for
+visualization, in particular \texttt{pong} \cite{Behr16}, for
 visualizing output of admixture proportion inferences, and
-\texttt{PCAviz} (Williams et al. 2017), a novel R package for plotting
-PCA outputs. We also use \texttt{PLINK} (S. Purcell et al. 2007; Chang
-et al. 2015) as a tool to perform some basic manipulations of the data
+\texttt{PCAviz} \cite{Williams17}, a novel R package for plotting
+PCA outputs. We also use \texttt{PLINK} \cite{Purcell07,Chang15} as a tool to perform some basic manipulations of the data
 (See Chapter 3 for more background on \texttt{PLINK}).
 
 The example data we use is derived from publicly available
 single-nucleotide polymorphism (SNP) genotype data from the CEPH-Human
-Genome Diversity Panel (Cann et al. 2002). Specifically, we will look at
-Illumina 650Y genotyping array data as first described by Li et al (Li
-et al. 2008). This sample is a global-scale sampling of human diversity
+Genome Diversity Panel \cite{Cann02}. Specifically, we will look at
+Illumina 650Y genotyping array data as first described by Li et al \cite{Li08}.
+This sample is a global-scale sampling of human diversity
 with 52 populations in total, and the raw files are available from the
 following link: \url{http://hagsc.org/hgdp/files.html}. These data have
 been used in numerous subsequent publications and are an important
 reference set.
 
 A few technical details are that the genotypes were filtered with a
-cutoff of 0.25 for the Illumina GenCall score (Illumina 2005) (a quality
+cutoff of 0.25 for the Illumina GenCall score \cite{GenCall} (a quality
 score generated by the basic genotype calling software). Further,
 individuals with a genotype call rate \textless{}98.5\% were removed,
 with the logic being that if a sample has many missing genotypes it may
@@ -921,200 +896,7 @@ structure that can be further investigated using more detailed and
 explicit approaches (such as those based on coalescent or diffusion
 theory, Chapters 7 on MSMC and 8 on CoalHMM).
 
-\newpage
-
-\section*{References}\label{references}
-\addcontentsline{toc}{section}{References}
-
-\hypertarget{refs}{}
-\hypertarget{ref-Alexander09}{}
-Alexander, David H, John Novembre, and Kenneth Lange. 2009. ``Fast
-model-based estimation of ancestry in unrelated individuals.''
-\emph{Genome Res} 19 (9): 1655--64.
-doi:\href{https://doi.org/10.1101/gr.094052.109}{10.1101/gr.094052.109}.
-
-\hypertarget{ref-Alexander11}{}
-Alexander, David H., and Kenneth. Lange. 2011. ``Enhancements to the
-Admixture Algorithm for Individual Ancestry Estimation.'' \emph{BMC
-Bioinformatics} 12 (June): 246.
-doi:\href{https://doi.org/10.1186/1471-2105-12-246}{10.1186/1471-2105-12-246}.
-
-\hypertarget{ref-Behr16}{}
-Behr, Aaron A., Katherine Z. Liu, Gracie Liu-Fang, Priyanka Nakka, and
-Sohini Ramachandran. 2016. ``Pong: Fast Analysis and Visualization of
-Latent Clusters in Population Genetic Data.'' \emph{Bioinformatics} 32
-(18): 2817--23.
-doi:\href{https://doi.org/10.1093/bioinformatics/btw327}{10.1093/bioinformatics/btw327}.
-
-\hypertarget{ref-Cann02}{}
-Cann, Howard M., Claudia de Toma, Lucien Cazes, Marie-Fernande Legrand,
-Valerie Morel, Laurence Piouffre, Julia Bodmer, et al. 2002. ``A Human
-Genome Diversity Cell Line Panel.'' \emph{Science} 296 (5566). American
-Association for the Advancement of Science: 261--62.
-doi:\href{https://doi.org/10.1126/science.296.5566.261b}{10.1126/science.296.5566.261b}.
-
-\hypertarget{ref-CavSforza94}{}
-Cavalli-Sforza, L Luca, Paolo Menozzi, and Alberto Piazza. 1994.
-\emph{The history and geography of human genes}. Princeton University
-Press. doi:\href{https://doi.org/10.2307/2058750}{10.2307/2058750}.
-
-\hypertarget{ref-Chang15}{}
-Chang, Christopher C, Carson C Chow, Laurent CAM Tellier, Shashaank
-Vattikuti, Shaun M Purcell, and James J Lee. 2015. ``Second-Generation
-Plink: Rising to the Challenge of Larger and Richer Datasets.''
-\emph{GigaScience} 4 (1): s13742--015--0047--0048.
-doi:\href{https://doi.org/10.1186/s13742-015-0047-8}{10.1186/s13742-015-0047-8}.
-
-\hypertarget{ref-Duforet-Frebourg16}{}
-Duforet-Frebourg, Nicolas, Keurcien Luu, Guillaume Laval, Eric Bazin,
-and Michael G.B. Blum. 2016. ``Detecting Genomic Signatures of Natural
-Selection with Principal Component Analysis: Application to the 1000
-Genomes Data.'' \emph{Molecular Biology and Evolution} 33 (4): 1082--93.
-doi:\href{https://doi.org/10.1093/molbev/msv334}{10.1093/molbev/msv334}.
-
-\hypertarget{ref-Engelhardt10}{}
-Engelhardt, Barbara E., and Matthew Stephens. 2010. ``Analysis of
-Population Structure: A Unifying Framework and Novel Methods Based on
-Sparse Factor Analysis.'' \emph{PLOS Genetics} 6 (9). Public Library of
-Science: 1--12.
-doi:\href{https://doi.org/10.1371/journal.pgen.1001117}{10.1371/journal.pgen.1001117}.
-
-\hypertarget{ref-Falush16}{}
-Falush, Daniel, Lucy van Dorp, and Daniel Lawson. 2016. ``A Tutorial on
-How (Not) to over-Interpret Structure/Admixture Bar Plots.''
-\emph{bioRxiv}. Cold Spring Harbor Laboratory.
-doi:\href{https://doi.org/10.1101/066431}{10.1101/066431}.
-
-\hypertarget{ref-Falush03}{}
-Falush, Daniel, Matthew Stephens, and Jonathan K Pritchard. 2003.
-``Inference of Population Structure Using Multilocus Genotype Data:
-Linked Loci and Correlated Allele Frequencies.'' \emph{Genetics} 164
-(4): 471--92.
-
-\hypertarget{ref-Kent09}{}
-Holsinger, Kent, and Bruce Weir. 2009. ``Genetics in Geographically
-Structured Populations: Defining, Estimating and Interpreting Fst'' 10
-(October): 639--50.
-
-\hypertarget{ref-Hubisz09}{}
-Hubisz, Melissa J, Daniel Falush, Matthew Stephens, and Jonathan K
-Pritchard. 2009. ``Inferring Weak Population Structure with the
-Assistance of Sample Group Information.'' \emph{Molecular Ecology
-Resources} 9 (5): 1322--32.
-doi:\href{https://doi.org/10.1111/j.1755-0998.2009.02591.x}{10.1111/j.1755-0998.2009.02591.x}.
-
-\hypertarget{ref-GenCall}{}
-Illumina, Inc. 2005. \emph{Illumina Gencall Data Analysis Software}.
-\url{https://www.illumina.com/Documents/products/technotes/technote_gencall_data_analysis_software.pdf}.
-
-\hypertarget{ref-Kopelman15}{}
-Kopelman, Naama M., Jonathan. Mayzel, Mattias. Jakobsson, Noah A.
-Rosenberg, and Itay. Mayrose. 2015. ``Clumpak: A Program for Identifying
-Clustering Modes and Packaging Population Structure Inferences Across
-K.'' \emph{Molecular Ecology Resources} 15 (5). Wiley Online Library:
-1179--91.
-doi:\href{https://doi.org/10.1111/1755-0998.12387}{10.1111/1755-0998.12387}.
-
-\hypertarget{ref-Li08}{}
-Li, Jun Z., Devin M. Absher, Hua Tang, Audrey M. Southwick, Amanda M.
-Casto, Sohini Ramachandran, Howard M. Cann, et al. 2008. ``Worldwide
-Human Relationships Inferred from Genome-Wide Patterns of Variation.''
-\emph{Science} 319 (5866). American Association for the Advancement of
-Science: 1100--1104.
-doi:\href{https://doi.org/10.1126/science.1153717}{10.1126/science.1153717}.
-
-\hypertarget{ref-McVean09}{}
-McVean, Gil. 2009. ``A Genealogical Interpretation of Principal
-Components Analysis.'' \emph{PLoS Genetics} 5 (10): e1000686.
-doi:\href{https://doi.org/10.1371/journal.pgen.1000686}{10.1371/journal.pgen.1000686}.
-
-\hypertarget{ref-Menozzi78}{}
-Menozzi, Paolo, Alberto Piazza, and L Luca Cavalli-Sforza. 1978.
-``Synthetic Maps of Human Gene Frequencies in Europeans.''
-\emph{Science} 201 (4358): 786--92.
-
-\hypertarget{ref-Novembre14}{}
-Novembre, John. 2014. ``Variations on a Common Structure: New Algorithms
-for a Valuable Model.'' \emph{Genetics} 197 (3): 809--11.
-doi:\href{https://doi.org/10.1534/genetics.114.166264}{10.1534/genetics.114.166264}.
-
-\hypertarget{ref-Novembre16a}{}
----------. 2016. ``Pritchard, Stephens, and Donnelly on Population
-Structure.'' \emph{Genetics} 204 (2): 391--93.
-doi:\href{https://doi.org/10.1534/genetics.116.195164}{10.1534/genetics.116.195164}.
-
-\hypertarget{ref-Novembre16b}{}
-Novembre, John, and Benjamin M Peter. 2016. ``Recent Advances in the
-Study of Fine-Scale Population Structure in Humans.'' \emph{Curr Opin
-Genet Dev} 41 (December): 98--105.
-doi:\href{https://doi.org/10.1016/j.gde.2016.08.007}{10.1016/j.gde.2016.08.007}.
-
-\hypertarget{ref-Novembre08a}{}
-Novembre, John, and Matthew Stephens. 2008. ``Interpreting Principal
-Component Analyses of Spatial Population Genetic Variation.''
-\emph{Nature Genetics} 40 (5): 646--49.
-doi:\href{https://doi.org/10.1038/ng.139}{10.1038/ng.139}.
-
-\hypertarget{ref-Novembre08b}{}
-Novembre, John, Toby Johnson, Katarzyna Bryc, Zoltan Kutalik, Adam R
-Boyko, Adam Auton, Amit Indap, et al. 2008. ``Genes Mirror Geography
-Within Europe'' 456 (December): 274.
-
-\hypertarget{ref-Patterson06}{}
-Patterson, Nick J, Alkes L Price, and David Reich. 2006. ``Population
-Structure and Eigenanalysis.'' \emph{PLoS Genetics} 2 (12): 2074--93.
-doi:\href{https://doi.org/10.1371/journal.pgen.0020190}{10.1371/journal.pgen.0020190}.
-
-\hypertarget{ref-Price06}{}
-Price, Alkes L, Nick J Patterson, Robert M Plenge, Michael E Weinblatt,
-Nancy A Shadick, and David Reich. 2006. ``Principal components analysis
-corrects for stratification in genome-wide association studies.''
-\emph{Nat Genet} 38 (8): 904--9.
-doi:\href{https://doi.org/10.1038/ng1847}{10.1038/ng1847}.
-
-\hypertarget{ref-Pritchard00}{}
-Pritchard, Jonathan K, Matthew Stephens, and Peter Donnelly. 2000.
-``Inference of Population Structure Using Multilocus Genotype Data.''
-\emph{Genetics} 155 (2): 945--59.
-
-\hypertarget{ref-Purcell07}{}
-Purcell, Shaun, Benjamin Neale, Katherine Todd-Brown, Lori Thomas,
-Manuel A.R. Ferreira, David Bender, Julian Maller, et al. 2007. ``Plink:
-A Tool Set for Whole-Genome Association and Population-Based Linkage
-Analyses'' 81 (October): 559--75.
-
-\hypertarget{ref-Raj14}{}
-Raj, Anil, Matthew Stephens, and Jonathan K Pritchard. 2014.
-``FastSTRUCTURE: Variational Inference of Population Structure in Large
-SNP Data Sets.'' \emph{Genetics} 197 (2): 573--89.
-doi:\href{https://doi.org/10.1534/genetics.114.164350}{10.1534/genetics.114.164350}.
-
-\hypertarget{ref-Rosenberg05}{}
-Rosenberg, Noah A, Saurabh Mahajan, Sohini Ramachandran, Chengfeng Zhao,
-Jonathan K Pritchard, and Marcus W Feldman. 2005. ``Clines, Clusters,
-and the Effect of Study Design on the Inference of Human Population
-Structure.'' \emph{PLoS Genetics} 1 (6): e70.
-doi:\href{https://doi.org/https://doi.org/10.1371/journal.pgen.0010070}{https://doi.org/10.1371/journal.pgen.0010070}.
-
-\hypertarget{ref-Rosenberg04}{}
-Rosenberg, Noah A. 2004. ``DISTRUCT: A Program for the Graphical Display
-of Population Structure.'' \emph{Molecular Ecology Notes} 4 (1). Wiley
-Online Library: 137--38.
-doi:\href{https://doi.org/10.1046/j.1471-8286.2003.00566.x}{10.1046/j.1471-8286.2003.00566.x}.
-
-\hypertarget{ref-Tian2008aa}{}
-Tian, Chao, Robert M Plenge, Michael Ransom, Annette Lee, Pablo
-Villoslada, Carlo Selmi, Lars Klareskog, et al. 2008. ``Analysis and
-Application of European Genetic Substructure Using 300 K SNP
-Information.'' \emph{PLoS Genet} 4 (1): e4.
-doi:\href{https://doi.org/10.1371/journal.pgen.0040004}{10.1371/journal.pgen.0040004}.
-
-\hypertarget{ref-Novembre17}{}
-Williams, Richard, Hossein Pourreza, Yuexi Wang, Peter Carbonetto, and
-John Novembre. 2017. ``PCAviz: Visualizing Principal Components
-Analysis.'' \url{http://github.com/NovembreLab/PCAviz}.
-
-\bibliographystyle{spbasic}
-\bibliography{references.bib}
+\bibliographystyle{spmpsci}
+\bibliography{references}
 
 \end{document}
