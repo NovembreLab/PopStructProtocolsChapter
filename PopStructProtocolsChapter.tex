@@ -195,8 +195,7 @@ such as PCA and \texttt{ADMIXTURE} can inadvertently mistake family
 structure for population structure. The starting data are available as
 plink-formatted files \texttt{H938.bed} \texttt{H938.fam},
 \texttt{H938.bim}, and an accompanying set of population identifiers
-\texttt{H938.clst.txt} in the \texttt{raw\_input} sub-directory of the
-repository.
+\texttt{H938.clst.txt} in the \texttt{raw\_input} sub-directory of the companion data.
 
 As a pragmatic side note, it is common (and recommended) when carrying
 out analyses of population structure to merge one's data with other
@@ -364,7 +363,7 @@ initializes a local web server to display the results.
 To run \texttt{pong} requires setting up a few files: 1) an
 \texttt{ind2pop} file that maps individuals to populations; 2) a
 \texttt{Qfilemap} file that points \texttt{pong} towards which `.Q'
-files to display; These are easy to build up from the command-line using
+files to display; these are easy to build up from the command-line using
 the \texttt{Euro.clst.txt} file we built above, and an \texttt{awk}
 command to output tab-separated text to a file with the
 \texttt{Qfilemap} suffix added to whatever file prefix we're using to
@@ -576,7 +575,7 @@ from unique sources, and at \(K\) of 7, 8, 9 we find structure within
 the Sardinian, Russian, Orcadian, and Basque samples is revealed, though
 for each, the substructure is not very stable (Fig. \ref{fig:Fig5}). The values of \(K=10\)
 and above make increasingly finer scale divisions that are difficult to
-interpret, and the major modesfor \(K=7\) and up only consist of one to
+interpret, and the major modes for \(K=7\) and up only consist of one to
 three runs, suggesting a very multi-modal likelihood surface and a poor
 resolution of the population structure.
 
@@ -584,7 +583,7 @@ Overall, its interesting to note that the visual inspection of the
 results suggests several ``real'' clusters in the data, supported by an
 alignment of the clustering with known population labels, even though
 the cross-validation supports a value of \(K=1\). This highlights a
-long-standing known issue with admixutre modeling: the selection of
+long-standing known issue with admixture modeling: the selection of
 \(K\) is a difficult problem to automate in a way that is robust.
 
 \subsubsection{Some advanced options}\label{some-advanced-options}
