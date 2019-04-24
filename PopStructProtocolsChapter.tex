@@ -692,7 +692,7 @@ each labelled group in PCA space:
 \NormalTok{prefix <-}\StringTok{ "out/H938_Euro.LDprune"}
 \NormalTok{nPCs <-}\StringTok{ }\DecValTok{20}
 
-\CommentTok{# Read in individual coordinates on PCs and eignvalues}
+\CommentTok{# Read in individual coordinates on PCs and eigenvalues}
 \NormalTok{PCA <-}\StringTok{ }\KeywordTok{read.table}\NormalTok{(}\KeywordTok{paste}\NormalTok{(prefix, }\StringTok{".eigs"}\NormalTok{, }\DataTypeTok{sep =} \StringTok{""}\NormalTok{))}
 \KeywordTok{names}\NormalTok{(PCA) <-}\StringTok{ }\KeywordTok{c}\NormalTok{(}\StringTok{"ID"}\NormalTok{, }\KeywordTok{paste}\NormalTok{(}\StringTok{"PC"}\NormalTok{, (}\DecValTok{1}\OperatorTok{:}\NormalTok{nPCs), }\DataTypeTok{sep =} \StringTok{""}\NormalTok{), }
                   \StringTok{"case.control"}\NormalTok{)}
