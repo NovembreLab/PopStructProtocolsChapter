@@ -1,5 +1,5 @@
 % !TeX document-id = {46bfcaa5-33c5-430e-83de-0d80c9460007}
-% !TeX program = pdfLaTeX
+% !TeX program = pdflatex
 \documentclass{svmult}       % onecolumn (second format)
 %\documentclass[twocolumn]{svjour3}          % twocolumn
 %
@@ -107,7 +107,7 @@ running principal component analysis (PCA) and admixture proportion
 inference - two of the most commonly used approaches in describing
 population structure. Along with hands-on examples with CEPH-Human
 Genome Diversity Panel and pragmatic caveats, readers will be able to
-analyze, and visualize population structure on their own data.
+analyze and visualize population structure on their own data.
 \end{abstract}
 
 
@@ -132,7 +132,7 @@ individuals belong to each.
 
 Two of the most commonly used approaches to describe population
 structure in a sample are principal components analysis \cite{Menozzi78,CavSforza94,Price06,Patterson06} and admixture
-proportion inference \cite{Pritchard00,Novembre16b}.
+proportion inference \cite{Pritchard00,Novembre16a}.
 In brief, principal components analysis reduces a
 multi-dimensional dataset to a much smaller number of dimensions that
 allows for visual exploration and compact quantitative summaries. In its
@@ -149,7 +149,7 @@ The history and basic behaviors of both these approaches have been
 written about extensively, including by some of us, and so we refer
 readers to several previous publications to learn the basic background
 and interpretative nuances of these approaches and their derivatives
-\cite{Pritchard00,Falush03,Rosenberg05,Hubisz09,Raj14,Novembre14,Falush16,Alexander09,Alexander11,Price06,Patterson06,Novembre08b,McVean09,Novembre16b}.
+\cite{Pritchard00,Falush03,Rosenberg05,Hubisz09,Raj14,Novembre14,Falush16,Alexander09,Alexander11,Price06,Patterson06,Novembre08a,McVean09,Novembre16b}.
 Here, in the
 spirit of this volume, we provide a protocol for running these analyses
 and share some pragmatic caveats that do not always arise in more
@@ -279,7 +279,7 @@ procedure is repeated:
 additional rounds of SNP filtering based on observed principal component
 loadings and/or population differentiation statistics. For example, a
 robust approach is to filter out large windows around any SNP with a
-high PCA loading, see \cite{Novembre08a}).
+high PCA loading, see \cite{Novembre08b}).
 
 \subsection{\texorpdfstring{Running
 \texttt{ADMIXTURE}}{Running ADMIXTURE}}\label{running-admixture}
@@ -397,7 +397,7 @@ Then to run \texttt{pong}, we use following command:
 \end{figure}
 
 We open a web browser to \texttt{http://localhost:4000/} to view the
-results. Fig. \ref{fig:Fig1} shows an example of what you should see.
+results. Fig. \ref{fig:Fig2} shows an example of what you should see.
 From this visualization, we can see the admixture model fits most
 individuals of the Adygei, Sardinian, Russian, French Basque samples as
 being derived each from a single source population (represented by
@@ -515,7 +515,7 @@ cross-validation error as a function of \(K\) (Fig. \ref{fig:Fig4}):
 \begin{figure}
     \centering
     \includegraphics{Figures/Figure4.pdf}
-    \caption{\label{fig:fig4}
+    \caption{\label{fig:Fig4}
         Cross-validation error as a function of K for the example dataset.}
 \end{figure}
 
